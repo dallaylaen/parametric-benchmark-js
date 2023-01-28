@@ -1,3 +1,6 @@
+# Custom files
+.idea/
+
 # Logs
 logs
 *.log
