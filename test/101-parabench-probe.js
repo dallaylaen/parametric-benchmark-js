@@ -13,7 +13,7 @@ describe('BigoBench', () => {
         cb();
       });
 
-    const prom = perf.run(10000, (ary, cb) => cb(ary.sort((x, y) => x - y)) );
+    const prom = perf.probe(10000, (ary, cb) => cb(ary.sort((x, y) => x - y)) );
 
     prom.then(out => {
       console.log(out);
@@ -29,6 +29,6 @@ describe('BigoBench', () => {
   });
 
   it ('has sane default setup & teardown', done => {
-    new ParaBench().run(1, (n, cb) => cb(n) ).then(() => done());
+    new ParaBench().probe(1, (n, cb) => cb(n) ).then(() => done());
   })
 });
