@@ -63,7 +63,7 @@ Testing over spans of possible inputs may catch interesting edge cases such as c
 
 * Use a library to generate graphs.
 
-# Author
+# Copyright & license
 
 License: MIT.
 

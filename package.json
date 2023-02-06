@@ -4,7 +4,8 @@
   "description": "Benchmark code samples over a range of inputs",
   "main": "index.js",
   "scripts": {
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "gen-js": "browserify ./web-index.js > docs/js/generated/bench.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,11 @@
   },
   "homepage": "https://github.com/dallaylaen/parametric-benchmark-js#readme",
   "devDependencies": {
+    "browserify": "^17.0.0",
     "chai": "^4.3.7",
     "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "process": "^0.11.10"
   }
 }
