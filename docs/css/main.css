@@ -1,0 +1,11 @@
+textarea.code {
+    height: 10em;
+    width: 100%;
+}
+
+button.run {
+    width: 100%;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+}

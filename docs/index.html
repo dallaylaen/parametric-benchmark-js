@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bench playground (use debugger)</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/generated/bench.js"></script>
+</head>
+<body>
+<div>
+    Use console.log to output results. Use new ParaBench() to create benchmark.
+</div>
+<textarea id="code" class="code">
+const bench = new ParaBench();
+
+bench.probe( 100000, (n, cb) => {
+    let head = null;
+    while (n-->0)
+        head = [head, n];
+    cb(head);
+}).then(console.log);
+</textarea><br>
+<button onclick="run()" class="run">run!</button>
+<script>
+    function run() {
+        const code = document.getElementById('code').value;
+        return eval(code);
+    }
+</script>
+</body>
+</html>
