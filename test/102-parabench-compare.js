@@ -21,6 +21,7 @@ describe( 'BigoBench.compare', () => {
       expect( Object.keys(processed).sort() ).to.deep.equal( ['n', 'times']);
       expect( Object.keys(processed.times).sort() ).to.deep.equal( ['bwd', 'fwd'])
 
+      expect( processed.n.length ).to.be.within(1, Infinity);
       expect( processed.times.fwd.length ).to.equal( processed.n.length );
       expect( processed.times.bwd.length ).to.equal( processed.n.length );
 
