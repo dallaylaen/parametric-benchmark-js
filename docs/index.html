@@ -9,8 +9,7 @@
     <script src="js/generated/bench.js"></script>
 </head>
 <body>
-<div>
-    Use console.log to output results. Use new ParaBench() to create benchmark.
+<div class="help">
 </div>
 
 <canvas id="draw" onload="return console.log("here");"></canvas><br>
@@ -20,7 +19,14 @@
         elem.width  = window.innerWidth * 0.8;
     })(document.getElementById("draw"))
 </script>
-<button onclick="run()" class="run">compare!</button>
+
+<div class="config">
+    minArg: <input class="num" id="minArg">
+    maxArg: <input class="num" id="maxArg">
+    maxTime (sec): <input class="num" id="maxTime" value="1">
+    <button onclick="run()" class="run">compare!</button>
+</div>
+
 <div class="solution">
     <input class="name" value="solution">
     <textarea class="code">
@@ -33,6 +39,7 @@
     </textarea>
     <div class="error"></div>
 </div>
+
 <div class="solution">
     <input class="name" value="other solution">
     <textarea class="code">
@@ -40,8 +47,19 @@
     </textarea>
     <div class="error"></div>
 </div>
+
 <script>
     let chart;
+
+    function maybenums(hash) {
+        const out = {};
+        for (let name in hash) {
+            const val = Number.parseFloat(hash[name]);
+            if (Number.isFinite(val))
+                out[name] = val;
+        }
+        return out;
+    }
 
     function run() {
         const variants = {};
@@ -76,7 +94,13 @@
         const bench = new ParaBench();
         // TODO setup, teardown
 
-        bench.compare({maxTime: 1}, variants).then(data => {
+        const params = maybenums({
+            maxTime: $('#maxTime').val(),
+            maxArg:  $('#maxArg').val(),
+            minArg:  $('#minArg').val(),
+        });
+
+        bench.compare({maxTime: 1, ...params}, variants).then(data => {
             console.log(data);
             const {n, times} = bench.flattenData(data);
 

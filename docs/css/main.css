@@ -4,7 +4,8 @@ textarea.code {
 }
 
 button.run {
-    width: 100%;
+    padding-left: 3em;
+    padding-right: 3em;
     background-color: green;
     color: white;
     font-weight: bold;
@@ -21,4 +22,9 @@ button.run {
 .error {
     color: red;
     font-weight: bold;
+}
+
+input.num {
+    width: 3em;
+    background-color: azure;
 }
