@@ -28,3 +28,10 @@ input.num {
     width: 3em;
     background-color: azure;
 }
+
+.square-label {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    color: white;
+    background-color: black;
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Bench playground (use debugger)</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -12,7 +12,7 @@
 <div class="help">
 </div>
 
-<canvas id="draw" onload="return console.log("here");"></canvas><br>
+<canvas id="draw"></canvas>
 <script>
     ( elem => {
         elem.height = window.innerHeight * 0.3;
@@ -24,6 +24,7 @@
     minArg: <input class="num" id="minArg">
     maxArg: <input class="num" id="maxArg">
     maxTime (sec): <input class="num" id="maxTime" value="1">
+    repeat: <input class="num" id="repeat">
     <button onclick="run()" class="run">compare!</button>
 </div>
 
@@ -51,7 +52,7 @@
 <script>
     let chart;
 
-    function maybenums(hash) {
+    function maybeNums(hash) {
         const out = {};
         for (let name in hash) {
             const val = Number.parseFloat(hash[name]);
@@ -78,7 +79,7 @@
                 elem.removeClass('broken');
                 elem.find('.error').text('');
 
-                const impl = eval(code);
+                const impl = eval('' + code);
                 if (typeof impl !== 'function')
                     throw new Error("Input must be a function, not "+typeof impl);
                 variants[name] = impl;
@@ -94,10 +95,11 @@
         const bench = new ParaBench();
         // TODO setup, teardown
 
-        const params = maybenums({
+        const params = maybeNums({
             maxTime: $('#maxTime').val(),
             maxArg:  $('#maxArg').val(),
             minArg:  $('#minArg').val(),
+            repeat:  $('#repeat').val(),
         });
 
         bench.compare({maxTime: 1, ...params}, variants).then(data => {
