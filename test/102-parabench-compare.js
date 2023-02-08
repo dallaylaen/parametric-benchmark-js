@@ -16,12 +16,13 @@ describe( 'BigoBench.compare', () => {
       // expect( Object.values(cmpData).map( x => x.length) ).to.deep.equal([4,4]);
 
       // console.log('alive');
-      const processed = bench.squashData(cmpData);
+      const processed = bench.flattenData(cmpData);
       console.log(processed);
-      expect( Object.keys(processed).sort() ).to.deep.equal( ['bwd', 'fwd', 'n']);
+      expect( Object.keys(processed).sort() ).to.deep.equal( ['n', 'times']);
+      expect( Object.keys(processed.times).sort() ).to.deep.equal( ['bwd', 'fwd'])
 
-      expect( processed.fwd.length ).to.equal( processed.n.length );
-      expect( processed.bwd.length ).to.equal( processed.n.length );
+      expect( processed.times.fwd.length ).to.equal( processed.n.length );
+      expect( processed.times.bwd.length ).to.equal( processed.n.length );
 
       // enforce processed.n to be sorted
       expect( processed.n ).to.deep.equal( processed.n.map(x=>x).sort((x,y) => x-y) );
