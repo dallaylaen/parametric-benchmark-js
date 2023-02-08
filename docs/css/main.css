@@ -9,3 +9,16 @@ button.run {
     color: white;
     font-weight: bold;
 }
+
+#draw {
+    border: solid red 1px;
+}
+
+.broken {
+    border: solid red 1px;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}

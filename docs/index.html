@@ -4,27 +4,95 @@
     <title>Bench playground (use debugger)</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/generated/bench.js"></script>
 </head>
 <body>
 <div>
     Use console.log to output results. Use new ParaBench() to create benchmark.
 </div>
-<textarea id="code" class="code">
-const bench = new ParaBench();
 
-bench.probe( 100000, (n, cb) => {
+<canvas id="draw" onload="return console.log("here");"></canvas><br>
+<script>
+    ( elem => {
+        elem.height = window.innerHeight * 0.3;
+        elem.width  = window.innerWidth * 0.8;
+    })(document.getElementById("draw"))
+</script>
+<button onclick="run()" class="run">compare!</button>
+<div class="solution">
+    <input class="name" value="solution">
+    <textarea class="code">
+(n, cb) => {
     let head = null;
     while (n-->0)
         head = [head, n];
     cb(head);
-}).then(console.log);
-</textarea><br>
-<button onclick="run()" class="run">run!</button>
+}
+    </textarea>
+    <div class="error"></div>
+</div>
+<div class="solution">
+    <input class="name" value="other solution">
+    <textarea class="code">
+
+    </textarea>
+    <div class="error"></div>
+</div>
 <script>
+    let chart;
+
     function run() {
-        const code = document.getElementById('code').value;
-        return eval(code);
+        const variants = {};
+
+        $('.solution').each( function() {
+            const elem = $(this);
+            const name = elem.find('.name').val();
+            const code = elem.find('.code').val();
+            if (!code.match(/\S/))
+                return;
+
+            try {
+                if (variants[name] !== undefined)
+                    throw new Error(`Name '${name}' is taken`);
+
+                elem.removeClass('broken');
+                elem.find('.error').text('');
+
+                const impl = eval(code);
+                if (typeof impl !== 'function')
+                    throw new Error("Input must be a function, not "+typeof impl);
+                variants[name] = impl;
+            } catch (err) {
+                elem.addClass('broken');
+                elem.find('.error').text(err.toString());
+            }
+        });
+
+        if (Object.keys(variants).length === 0)
+            return;
+
+        const bench = new ParaBench();
+        // TODO setup, teardown
+
+        bench.compare({maxTime: 1}, variants).then(data => {
+            console.log(data);
+            const {n, times} = bench.flattenData(data);
+
+            const datasets = Object.entries(times)
+                    .map( pair => ({ label: pair[0], data: pair[1] }) );
+
+            if (chart)
+                chart.destroy();
+            chart = new Chart('draw', {
+                type: 'line',
+                data: {
+                    labels: n,
+                    datasets,
+                }
+            })
+        });
     }
 </script>
 </body>
