@@ -29,9 +29,29 @@ input.num {
     background-color: azure;
 }
 
-.square-label {
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    color: white;
-    background-color: black;
+.hidden {
+    display: none;
+}
+
+/* solution names, also setup & teardown */
+.label {
+    width: 6em;
+    display: inline-block;
+    background-color: bisque;
+}
+
+/* two-column text */
+.row {
+    display: flex;
+}
+.left {
+    flex: 10%;
+}
+.right {
+    flex: 90%;
+}
+
+/* Allow toggling code visibility  */
+.collapsed .right {
+    display: none;
 }

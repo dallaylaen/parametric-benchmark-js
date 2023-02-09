@@ -28,28 +28,84 @@
     <button onclick="run()" class="run">compare!</button>
 </div>
 
-<div class="solution">
-    <input class="name" value="solution">
-    <textarea class="code">
+<div class="hidden collapsed">
+    <div class="left">
+        <input readonly class="label" value="setup">
+        <button onclick="toggleParent(this)">&gt;&gt;</button></div>
+    <div class="right">
+        <textarea class="code" id="setup">
+(n, cb) => cb(n)
+        </textarea>
+    </div>
+</div>
+
+<div class="row solution">
+    <div class="left">
+        <input class="name label" value="solution">
+        <button onclick="toggleParent(this)">&lt;&lt;</button>
+    </div>
+    <div class="right">
+        <textarea class="code">
 (n, cb) => {
     let head = null;
     while (n-->0)
         head = [head, n];
     cb(head);
 }
-    </textarea>
-    <div class="error"></div>
+        </textarea>
+        <div class="error"></div>
+    </div>
 </div>
 
-<div class="solution">
-    <input class="name" value="other solution">
-    <textarea class="code">
+<div class="row solution">
+    <div class="left">
+        <input class="name label" value="other solution">
+        <button onclick="toggleParent(this)">&lt;&lt;</button>
+    </div>
+    <div class="right">
+        <textarea class="code">
+(n, cb) => {
+    let head = null;
+    while (n-->0)
+        head = {next: head, val: n};
+    cb(head);
+}
+        </textarea>
+        <div class="error"></div>
+    </div>
+</div>
 
-    </textarea>
-    <div class="error"></div>
+<div class="hidden collapsed">
+    <div class="left">
+        <input readonly class="label" value="teardown">
+        <button onclick="toggleParent(this)">&gt;&gt;</button>
+    </div>
+    <div class="right">
+        <textarea class="code" id="teardown">
+(retVal, cb) => {
+    // check output validity here
+    cb()
+}
+        </textarea>
+    </div>
 </div>
 
 <script>
+    function toggleParent(elem) {
+        const self = $(elem);
+        const root = self.closest('.row');
+        if (root.hasClass('collapsed')) {
+            root.removeClass('collapsed');
+            self.text('<<')
+        } else {
+            root.addClass('collapsed');
+            self.text('>>')
+        }
+    }
+</script>
+
+<script>
+    /* main */
     let chart;
 
     function maybeNums(hash) {
