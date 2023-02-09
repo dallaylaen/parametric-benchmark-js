@@ -28,12 +28,12 @@
     <button onclick="run()" class="run">compare!</button>
 </div>
 
-<div class="hidden collapsed">
+<div class="row collapsed" id="setup">
     <div class="left">
         <input readonly class="label" value="setup">
         <button onclick="toggleParent(this)">&gt;&gt;</button></div>
     <div class="right">
-        <textarea class="code" id="setup">
+        <textarea class="code">
 (n, cb) => cb(n)
         </textarea>
     </div>
@@ -75,13 +75,13 @@
     </div>
 </div>
 
-<div class="hidden collapsed">
+<div class="row collapsed" id="teardown">
     <div class="left">
         <input readonly class="label" value="teardown">
         <button onclick="toggleParent(this)">&gt;&gt;</button>
     </div>
     <div class="right">
-        <textarea class="code" id="teardown">
+        <textarea class="code">
 (retVal, cb) => {
     // check output validity here
     cb()
@@ -108,48 +108,29 @@
     /* main */
     let chart;
 
-    function maybeNums(hash) {
-        const out = {};
-        for (let name in hash) {
-            const val = Number.parseFloat(hash[name]);
-            if (Number.isFinite(val))
-                out[name] = val;
-        }
-        return out;
-    }
-
     function run() {
         const variants = {};
 
         $('.solution').each( function() {
             const elem = $(this);
             const name = elem.find('.name').val();
-            const code = elem.find('.code').val();
-            if (!code.match(/\S/))
+            if (variants[name])
                 return;
-
-            try {
-                if (variants[name] !== undefined)
-                    throw new Error(`Name '${name}' is taken`);
-
-                elem.removeClass('broken');
-                elem.find('.error').text('');
-
-                const impl = eval('' + code);
-                if (typeof impl !== 'function')
-                    throw new Error("Input must be a function, not "+typeof impl);
+            const impl = prepareCode(elem);
+            if (impl)
                 variants[name] = impl;
-            } catch (err) {
-                elem.addClass('broken');
-                elem.find('.error').text(err.toString());
-            }
         });
 
         if (Object.keys(variants).length === 0)
             return;
 
-        const bench = new ParaBench();
-        // TODO setup, teardown
+        const setup = prepareCode($('#setup'));
+        const teardown = prepareCode($('#teardown'));
+
+        if (!setup || !teardown)
+            return;
+
+        const bench = new ParaBench().setup(setup).teardown(teardown);
 
         const params = maybeNums({
             maxTime: $('#maxTime').val(),
@@ -176,6 +157,36 @@
             })
         });
     }
+
+    function prepareCode(elem) {
+        const code = elem.find('.code').val();
+        if (!code.match(/\S/))
+            return;
+
+        try {
+            elem.removeClass('broken');
+            elem.find('.error').text('');
+
+            const impl = eval('' + code);
+            if (typeof impl !== 'function')
+                throw new Error("Input must be a function, not "+typeof impl);
+            return impl;
+        } catch (err) {
+            elem.addClass('broken');
+            elem.find('.error').text(err.toString());
+        }
+    }
+
+    function maybeNums(hash) {
+        const out = {};
+        for (let name in hash) {
+            const val = Number.parseFloat(hash[name]);
+            if (Number.isFinite(val))
+                out[name] = val;
+        }
+        return out;
+    }
+
 </script>
 </body>
 </html>
