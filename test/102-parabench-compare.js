@@ -7,7 +7,7 @@ describe( 'BigoBench.compare', () => {
   it( 'produces some results', done => {
     const bench = new ParaBench();
 
-    bench.compare({ maxTime: 0.025 }, {
+    bench.compare({ maxTime: 0.01 }, {
       fwd: (n, cb) => { let sum = 0; for (let i = 0; i < n; i++) sum += i; cb(sum) },
       bwd: (n, cb) => { let sum = 0; for (let i = n; i--> 0; ) sum += i; cb(sum) },
     }).then(cmpData => {
@@ -16,7 +16,7 @@ describe( 'BigoBench.compare', () => {
       // expect( Object.values(cmpData).map( x => x.length) ).to.deep.equal([4,4]);
 
       // console.log('alive');
-      const processed = bench.flattenData(cmpData);
+      const processed = bench.flattenData(cmpData, {minTime: 0.0001});
       console.log(processed);
       expect( Object.keys(processed).sort() ).to.deep.equal( ['n', 'times']);
       expect( Object.keys(processed.times).sort() ).to.deep.equal( ['bwd', 'fwd'])
