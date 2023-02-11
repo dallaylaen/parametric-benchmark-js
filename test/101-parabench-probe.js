@@ -39,6 +39,7 @@ describe('BigoBench', () => {
         done( { expected: 'timeout', got: retVal });
       })
       .catch( err => {
+        console.log('error on timeout: ', err);
         expect( err ).to.match( /time.*out\D+5 ms/);
         done();
       });
