@@ -8,7 +8,7 @@ describe( "ParaBench.getTimeRes", () => {
         for (let i = 0; i < 10; i++) {
             const tres = ParaBench.getTimeRes();
             console.log('timer resolution: ', tres);
-            expect(tres).to.be.within(1e-9, 10);
+            expect(tres).to.be.within(1e-9, 0.1);
         }
         done();
     })
