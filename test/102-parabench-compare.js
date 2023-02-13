@@ -16,6 +16,8 @@ describe( 'BigoBench.compare', () => {
         .add('bwd', (n, cb) => { let sum = 0; for (let i = n; i--> 0; ) sum += i; cb(sum) })
         ;
 
+    expect( bench.list() ).to.deep.equal( ['bwd', 'fwd'] );
+
     bench.compare({ maxTime: 0.01 } ).then(cmpData => {
       // console.log('got some data:', cmpData);
       expect( Object.keys(cmpData).sort() ).to.deep.equal(['bwd', 'fwd']);
