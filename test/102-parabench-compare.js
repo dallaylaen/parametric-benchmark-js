@@ -5,7 +5,13 @@ const { ParaBench} = require ('../lib/paraBench');
 
 describe( 'BigoBench.compare', () => {
   it( 'produces some results', done => {
+    const trace = {};
     const bench = new ParaBench()
+        .progress(soFar => {
+            if(!trace[soFar.name])
+                trace[soFar.name] = [];
+            trace[soFar.name].push(soFar.result);
+        })
         .add('fwd', (n, cb) => { let sum = 0; for (let i = 0; i < n; i++) sum += i; cb(sum) })
         .add('bwd', (n, cb) => { let sum = 0; for (let i = n; i--> 0; ) sum += i; cb(sum) })
         ;
@@ -29,6 +35,8 @@ describe( 'BigoBench.compare', () => {
       expect( processed.n ).to.deep.equal( processed.n.map(x=>x).sort((x,y) => x-y) );
 
       // TODO actual tests ^)
+
+      expect( trace ).to.deep.equal( cmpData );
       done();
     }).catch( err => done(err) );
   })
