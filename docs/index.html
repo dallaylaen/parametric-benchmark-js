@@ -110,22 +110,9 @@
     /* main */
     let chart;
 
+    const tres = ParaBench.getTimeRes();
+
     function run() {
-        const variants = {};
-
-        $('.solution').each( function() {
-            const elem = $(this);
-            const name = elem.find('.name').val();
-            if (variants[name])
-                return;
-            const impl = prepareCode(elem);
-            if (impl)
-                variants[name] = impl;
-        });
-
-        if (Object.keys(variants).length === 0)
-            return;
-
         const setup = prepareCode($('#setup'));
         const teardown = prepareCode($('#teardown'));
 
@@ -134,6 +121,19 @@
 
         const bench = new ParaBench().setup(setup).teardown(teardown);
 
+        $('.solution').each( function() {
+            const elem = $(this);
+            const name = elem.find('.name').val();
+            const impl = prepareCode(elem);
+            if (!impl)
+                return;
+
+            bench.add( name, impl );
+        });
+
+        if (bench.list().length === 0)
+            return;
+
         const params = maybeNums({
             maxTime: $('#maxTime').val(),
             maxArg:  $('#maxArg').val(),
@@ -141,9 +141,9 @@
             repeat:  $('#repeat').val(),
         });
 
-        bench.compare({maxTime: 1, ...params}, variants).then(data => {
+        bench.compare({maxTime: 1, ...params}).then(data => {
             console.log(data);
-            const {n, times} = bench.flattenData(data);
+            const {n, times} = bench.flattenData(data, {minTime: tres * 5 });
 
             const datasets = Object.entries(times)
                     .map( pair => ({ label: pair[0], data: pair[1] }) );

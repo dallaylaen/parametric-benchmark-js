@@ -11,12 +11,8 @@ button.run {
     font-weight: bold;
 }
 
-#draw {
-    border: solid red 1px;
-}
-
 .broken {
-    border: solid red 1px;
+    border-left: solid red 0.5em;
 }
 
 .error {
