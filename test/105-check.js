@@ -15,5 +15,16 @@ describe( 'ParaBench.check', () => {
                 done();
             })
             .catch(done);
+    });
+
+    it( 'returns nothing on success', done => {
+        new ParaBench()
+            .add( 'ok', (n, cb) => cb(n))
+            .check(1)
+            .then( bad => {
+                expect(bad).to.equal(undefined);
+                done();
+            })
+            .catch(done);
     })
 });
