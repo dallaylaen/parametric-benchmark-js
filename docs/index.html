@@ -141,22 +141,24 @@
             repeat:  $('#repeat').val(),
         });
 
-        bench.compare({maxTime: 1, ...params}).then(data => {
-            console.log(data);
-            const {n, times} = bench.flattenData(data, {minTime: tres * 5 });
+        bench.compare({maxTime: 1, ...params}).then(data => drawChart(bench, data));
+    }
 
-            const datasets = Object.entries(times)
-                    .map( pair => ({ label: pair[0], data: pair[1] }) );
+    function drawChart(bench, rawInput) {
+        console.log(rawInput);
+        const {n, times} = bench.flattenData(rawInput, {minTime: tres * 5 });
 
-            if (chart)
-                chart.destroy();
-            chart = new Chart('draw', {
-                type: 'line',
-                data: {
-                    labels: n,
-                    datasets,
-                }
-            })
+        const datasets = Object.entries(times)
+            .map( pair => ({ label: pair[0], data: pair[1] }) );
+
+        if (chart)
+            chart.destroy();
+        chart = new Chart('draw', {
+            type: 'line',
+            data: {
+                labels: n,
+                datasets,
+            }
         });
     }
 
