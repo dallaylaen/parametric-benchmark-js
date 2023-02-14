@@ -119,6 +119,7 @@
         if (!setup || !teardown)
             return;
 
+        const show = {}; // TODO better name!
         const bench = new ParaBench().setup(setup).teardown(teardown);
 
         $('.solution').each( function() {
@@ -128,6 +129,7 @@
             if (!impl)
                 return;
 
+            show[name] = elem;
             bench.add( name, impl );
         });
 
@@ -141,7 +143,13 @@
             repeat:  $('#repeat').val(),
         });
 
-        bench.compare({maxTime: 1, ...params}).then(data => drawChart(bench, data));
+        bench.check(2000, 1).then( bad => {
+            if (!bad)
+                bench.compare({maxTime: 1, ...params}).then(data => drawChart(bench, data));
+            for (let name in bad) {
+                setError(show[name], bad[name] );
+            }
+        });
     }
 
     function drawChart(bench, rawInput) {
@@ -176,9 +184,13 @@
                 throw new Error("Input must be a function, not "+typeof impl);
             return impl;
         } catch (err) {
-            elem.addClass('broken');
-            elem.find('.error').text(err.toString());
+            setError(elem, err.toString());
         }
+    }
+
+    function setError(elem, error) {
+        elem.addClass('broken');
+        elem.find('.error').text(error);
     }
 
     function maybeNums(hash) {
