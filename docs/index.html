@@ -12,13 +12,15 @@
 <div class="help">
 </div>
 
-<canvas id="draw"></canvas>
-<script>
-    ( elem => {
-        elem.height = window.innerHeight * 0.3;
-        elem.width  = window.innerWidth * 0.8;
-    })(document.getElementById("draw"))
-</script>
+<div style="height: 10em">
+    <canvas id="draw"></canvas>
+</div>
+
+<div class="row">
+    <div class="left"><span id="status">ready...</span></div>
+    <div class="right"><span id="progress-bar"></span></div>
+</div>
+
 
 <div class="config">
     minArg: <input class="num" id="minArg">
@@ -119,8 +121,12 @@
         if (!setup || !teardown)
             return;
 
+        let count = 0;
         const show = {}; // TODO better name!
-        const bench = new ParaBench().setup(setup).teardown(teardown);
+        const bench = new ParaBench()
+            .setup(setup)
+            .teardown(teardown)
+            .progress(progressBar);
 
         $('.solution').each( function() {
             const elem = $(this);
@@ -143,17 +149,35 @@
             repeat:  $('#repeat').val(),
         });
 
+        setStatus('checking...');
         bench.check(2000, 1).then( bad => {
-            if (!bad)
-                bench.compare({maxTime: 1, ...params}).then(data => drawChart(bench, data));
+            if (!bad) {
+                setStatus('running...')
+                bench
+                    .compare({maxTime: 1, ...params})
+                    .then(data => drawChart(bench, data));
+                return;
+            };
+            setStatus('kaboom!');
             for (let name in bad) {
                 setError(show[name], bad[name] );
             }
         });
     }
 
+    function setStatus(str) {
+        const elem = document.getElementById('status');
+        console.log('setStatus()', str, '=>', elem);
+        elem.innerHTML = str;
+    }
+
+    function progressBar(progress) {
+        $('#progress-bar').css('border-left', progress.percent + '%');
+    }
+
     function drawChart(bench, rawInput) {
         console.log(rawInput);
+
         const {n, times} = bench.flattenData(rawInput, {minTime: tres * 5 });
 
         const datasets = Object.entries(times)
@@ -163,11 +187,16 @@
             chart.destroy();
         chart = new Chart('draw', {
             type: 'line',
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+            },
             data: {
                 labels: n,
                 datasets,
             }
         });
+        setStatus('done');
     }
 
     function prepareCode(elem) {
@@ -181,7 +210,7 @@
 
             const impl = eval('' + code);
             if (typeof impl !== 'function')
-                throw new Error("Input must be a function, not "+typeof impl);
+                throw new Error("Solution must be a function, not "+typeof impl);
             return impl;
         } catch (err) {
             setError(elem, err.toString());
@@ -204,5 +233,6 @@
     }
 
 </script>
+
 </body>
 </html>
