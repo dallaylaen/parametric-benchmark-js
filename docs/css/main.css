@@ -51,3 +51,14 @@ input.num {
 .collapsed .right {
     display: none;
 }
+
+.progress-bar {
+    /* height: 1em; */
+    width: 100%;
+    background-color: lightblue;
+}
+
+.progress {
+    height: 1em;
+    background-color: blue;
+}
