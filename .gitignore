@@ -1,8 +1,8 @@
 # Custom files
 .idea/
 
-# Gererated files
-/docs/js/generated/*.js
+# Gererated files - comment for github.io
+# /docs/js/generated/*.js
 
 # Logs
 logs
