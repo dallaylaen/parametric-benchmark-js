@@ -26,7 +26,7 @@ describe( 'BigoBench.compare', () => {
       // console.log('alive');
       const processed = bench.flattenData(cmpData, {minTime: 0.0001});
       console.log(processed);
-      expect( Object.keys(processed).sort() ).to.deep.equal( ['n', 'times']);
+      expect( Object.keys(processed).sort() ).to.deep.equal( ['n', 'ops', 'times']);
       expect( Object.keys(processed.times).sort() ).to.deep.equal( ['bwd', 'fwd'])
 
       expect( processed.n.length ).to.be.within(1, Infinity);

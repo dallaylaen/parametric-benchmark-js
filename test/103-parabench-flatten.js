@@ -12,6 +12,9 @@ describe( 'ParaBench.flattenData', () => {
             n: [1],
             times: {
                 foo: [0.1]
+            },
+            ops: {
+                foo: [10]
             }
         });
 
