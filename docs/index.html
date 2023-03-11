@@ -180,9 +180,9 @@
     function drawChart(bench, rawInput) {
         console.log(rawInput);
 
-        const {n, times} = bench.flattenData(rawInput, {minTime: tres * 5 });
+        const {n, ops} = bench.flattenData(rawInput, {minTime: tres * 5 });
 
-        const datasets = Object.entries(times)
+        const datasets = Object.entries(ops)
             .map( pair => ({ label: pair[0], data: pair[1] }) );
 
         if (chart)
@@ -192,11 +192,22 @@
             options: {
                 maintainAspectRatio: false,
                 responsive: true,
+                scales: {
+                    x: {
+                        title: { text: 'argument', display: true, },
+                        display: true,
+                    },
+                    y: {
+                        title: { text: 'operations per second', display: true, },
+                        display: true,
+                    }
+                },
             },
             data: {
                 labels: n,
                 datasets,
-            }
+            },
+
         });
         setStatus('done');
     }
