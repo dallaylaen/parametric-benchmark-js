@@ -69,6 +69,14 @@ class ParaBench {
   /**
    * Deallocate whatever resources were used for the benchmark, and also
    * test the result for validity.
+   *
+   * The teardown function gets the value returned by code in question as argument
+   * and additional this object containing n (the numeric argument) and arg (the input
+   * to code in question) and maybe some other fields.
+   *
+   * It must return via callback (its second argument),
+   * either a false value if everything is ok or the description of the problem.
+   *
    * @param {(retVal: any, callback: ([string]) => void) => void} fun
    * @returns {ParaBench} self
    */
@@ -87,6 +95,7 @@ class ParaBench {
    */
   probe (options, userCode) {
     const n = options.arg;
+
     if (!(Number.isInteger(n) && n > 0))
       throw new Error("probe requires positive integer {arg} parameter");
 
@@ -101,11 +110,11 @@ class ParaBench {
         const cpu2 = cpuTime();
         const date2 = getTime();
         /* end critical section */
-        resolve([retVal, {date1, date2, cpu1, cpu2}]);
+        resolve({arg, retVal, date1, date2, cpu1, cpu2});
       });
-    })).then( pair => timedPromise( 'Teardown', options.timeout, resolve => {
-        const [retVal, hash] = pair;
-        this._teardown(retVal, err => resolve({err, ...hash}));
+    })).then( hash => timedPromise( 'Teardown', options.timeout, resolve => {
+        const info = {n, arg: hash.arg};
+        this._teardown.apply(info, [hash.retVal, err => resolve({err, ...hash})]);
     })).then( hash => new Promise( resolve => {
       const { cpu1, cpu2, date1, date2, err } = hash;
       const time = (date2 - date1) / 1000;
@@ -285,11 +294,13 @@ class ParaBench {
    * @desc Process raw comparison data into something useful for e.g. plotting
    * @param {Object<string, Array<CpuStat>>} comparison Results of a previous compare() call.
    * @param {Object} options
-   * @param {number} options.minTime - resolution (in second). Default is 0.004.
+   * @param {number} options.minTime resolution (in second). Default is 0.004.
+   * @param {"time"|"cpu"} options.useStat which of the measures stats to use. Default is 'time' (physical time)
    * @returns {Object<n : Array<int>, times : Object<string,Array<number>> >, ops : Object<string, Array<number>>} data
    */
   static flattenData(comparison, options = {}) {
     const threshold = options.minTime || 0.004;
+    const useStat   = options.useStat || 'time';
     const validArgs = new Set();
     const intermediate = {};
 
@@ -299,7 +310,7 @@ class ParaBench {
       for (let entry of comparison[name]) {
         // accumulate results from all runs
         // TODO use normal statistics, not just min()
-        runs.set(entry.n, Math.min( entry.time, runs.get(entry.n) ?? Infinity) );
+        runs.set(entry.n, Math.min( entry[useStat], runs.get(entry.n) ?? Infinity) );
         validArgs.add(entry.n);
       }
       intermediate[name] = runs;
