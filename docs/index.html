@@ -169,6 +169,11 @@
             repeat:  $('#repeat').val(),
         });
 
+        bench.onTeardownFail(info => {
+            const { name, n, err } = info;
+                setError(show[name], 'teardown failed for input ' + n + ': ' + err);
+        });
+
         setStatus('checking...');
         bench.check(2000, 1).then( bad => {
             if (!bad) {
