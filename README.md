@@ -1,5 +1,7 @@
 # Description
 
+![project logo](docs/img/parametric-benchmark.png)
+
 Measure performance of code snippets over a range of inputs.
 
 * measures user, system, and physical time;
