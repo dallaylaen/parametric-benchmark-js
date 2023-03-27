@@ -51,6 +51,7 @@ class ParaBench {
     this._setup = (n, cb) => cb(n);
     this._teardown = (_, cb) => cb();
     this._solution = {};
+    this._onteardownfail = () => {};
     this._progress = () => {};
   }
 
@@ -86,8 +87,19 @@ class ParaBench {
   }
 
   /**
+   * @desc Perform an action whenever teardown doesn't encounter what is was expecting.
+   * @param { (error: {n: int, name: string, err: any}) => void } fun
+   * @return {ParaBench} this (chainable)
+   */
+  onTeardownFail(fun) {
+    this._onteardownfail = fun;
+    return this;
+  }
+
+  /**
    * @desc Execute benchmark.
    * @param {Object} options
+   * @param {String} [options.name] identifier of the solution in question
    * @param {int} options.arg - positive integer parameter to generate input from.
    * @param {number} [options.timeout] - (in milliseconds) when to declare the probe is taking too long
    * @param {(input: any, callback: (retVal: any) => void) => void} userCode (arg, callback) => {...; callback(retVal)}
@@ -120,8 +132,10 @@ class ParaBench {
       const time = (date2 - date1) / 1000;
 
       const ret = { n, time, iter: time / n };
-      if (err)
+      if (err) {
         ret.err = err;
+        this._onteardownfail({ n, err, name: options.name })
+      }
       if (cpu2.user !== undefined) {
         ret.user = (cpu2.user - cpu1.user) / 10 ** 6;
         ret.system = (cpu2.system - cpu1.system) / 10 ** 6;
@@ -264,7 +278,7 @@ class ParaBench {
         return resolve(out);
 
       const { name, n } = next;
-      return this.probe({arg: n}, variants[name]).then(piece => {
+      return this.probe({arg: n, name}, variants[name]).then(piece => {
         const cpu = timeSpent[name] += piece.time;
         if (cpu > maxTime)
           pending.delete(name); // had enough
