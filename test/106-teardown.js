@@ -6,9 +6,10 @@ const { ParaBench } = require ('../index.js');
 describe( 'ParaBench.teardown', () => {
     it('gets executed and sets err in stat accordingly', done => {
         const bench = new ParaBench()
-            .teardown(function(result, cb) {
-                const wanted = this.n*(this.n-1)/2;
-                if (this.n !== this.arg)
+            .teardown((info, cb) => {
+                const result = info.output;
+                const wanted = info.n*(info.n-1)/2;
+                if (info.n !== info.input)
                     throw('expected n to equal arg');
                 if (result !== wanted)
                     cb('expected '+wanted+', found '+result);
