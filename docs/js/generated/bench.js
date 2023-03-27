@@ -70,14 +70,14 @@ class ParaBench {
    * Deallocate whatever resources were used for the benchmark, and also
    * test the result for validity.
    *
-   * The teardown function gets the value returned by code in question as argument
-   * and additional this object containing n (the numeric argument) and arg (the input
-   * to code in question) and maybe some other fields.
+   * The teardown function gets a hash containing the initial numeric argument (n),
+   * the input given to code in question (input) and its return value (output) and possibly
+   * som additional parameters.
    *
    * It must return via callback (its second argument),
-   * either a false value if everything is ok or the description of the problem.
+   * either a false value if everything is ok, or the description of the problem if there's one.
    *
-   * @param {(retVal: any, callback: ([string]) => void) => void} fun
+   * @param {({n: int, input: any, output: any}, callback: ([string]) => void) => void} fun
    * @returns {ParaBench} self
    */
   teardown (fun) {
@@ -113,8 +113,8 @@ class ParaBench {
         resolve({arg, retVal, date1, date2, cpu1, cpu2});
       });
     })).then( hash => timedPromise( 'Teardown', options.timeout, resolve => {
-        const info = {n, arg: hash.arg};
-        this._teardown.apply(info, [hash.retVal, err => resolve({err, ...hash})]);
+        const info = {n, input: hash.arg, output: hash.retVal};
+        this._teardown(info, err => resolve({err, ...hash}));
     })).then( hash => new Promise( resolve => {
       const { cpu1, cpu2, date1, date2, err } = hash;
       const time = (date2 - date1) / 1000;
