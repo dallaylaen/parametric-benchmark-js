@@ -98,9 +98,10 @@
     </div>
     <div class="right">
         <textarea class="code">
-(retVal, cb) => {
+(data, cb) => {
+    const {n, input, output} = data;
     // check output validity here
-    cb()
+    cb();
 }
         </textarea>
         <div class="error"></div>
