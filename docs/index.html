@@ -46,15 +46,16 @@
 <div class="row solution">
     <div class="left">
         <input class="name label" value="solution">
-        <button onclick="toggleParent(this)">&lt;&lt;</button>
+        <button onclick="toggleParent(this)">&lt;&lt;</button><br>
+        <input type="checkbox" class="async">async<br>
     </div>
     <div class="right">
         <textarea class="code">
-(n, cb) => {
+n => {
     let head = null;
     while (n-->0)
         head = [head, n];
-    cb(head);
+    return head;
 }
         </textarea>
         <div class="error"></div>
@@ -64,15 +65,16 @@
 <div class="row solution">
     <div class="left">
         <input class="name label" value="other solution">
-        <button onclick="toggleParent(this)">&lt;&lt;</button>
+        <button onclick="toggleParent(this)">&lt;&lt;</button><br>
+        <input type="checkbox" class="async">async<br>
     </div>
     <div class="right">
         <textarea class="code">
-(n, cb) => {
+n => {
     let head = null;
     while (n-->0)
         head = {next: head, val: n};
-    cb(head);
+    return head;
 }
         </textarea>
         <div class="error"></div>
@@ -82,7 +84,8 @@
 <div class="row solution collapsed">
     <div class="left">
         <input class="name label" value="more solution">
-        <button onclick="toggleParent(this)">&lt;&lt;</button>
+        <button onclick="toggleParent(this)">&gt;&gt;</button><br>
+        <input type="checkbox" class="async">async<br>
     </div>
     <div class="right">
         <textarea class="code">
@@ -152,12 +155,15 @@
         $('.solution').each( function() {
             const elem = $(this);
             const name = elem.find('.name').val();
+            const async = elem.find('.async').is(':checked');
             const impl = prepareCode(elem);
             if (!impl)
                 return;
 
             show[name] = elem;
-            bench.add( name, impl );
+            async
+                ? bench.addAsync( name, impl)
+                : bench.add( name, impl );
         });
 
         if (bench.list().length === 0)
