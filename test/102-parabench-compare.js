@@ -12,8 +12,8 @@ describe( 'BigoBench.compare', () => {
                 trace[soFar.name] = [];
             trace[soFar.name].push(soFar.result);
         })
-        .add('fwd', (n, cb) => { let sum = 0; for (let i = 0; i < n; i++) sum += i; cb(sum) })
-        .add('bwd', (n, cb) => { let sum = 0; for (let i = n; i--> 0; ) sum += i; cb(sum) })
+        .addAsync('fwd', (n, cb) => { let sum = 0; for (let i = 0; i < n; i++) sum += i; cb(sum) })
+        .addAsync('bwd', (n, cb) => { let sum = 0; for (let i = n; i--> 0; ) sum += i; cb(sum) })
         ;
 
     expect( bench.list() ).to.deep.equal( ['bwd', 'fwd'] );
