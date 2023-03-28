@@ -13,7 +13,7 @@ describe('BigoBench', () => {
         cb();
       });
 
-    const prom = perf.probe({arg: 10000}, (ary, cb) => cb(ary.sort((x, y) => x - y)) );
+    const prom = perf.probe({arg: 10000, async: true}, (ary, cb) => cb(ary.sort((x, y) => x - y)) );
 
     prom.then(out => {
       console.log(out);
@@ -30,11 +30,11 @@ describe('BigoBench', () => {
   });
 
   it ('has sane default setup & teardown', done => {
-    new ParaBench().probe({arg: 1}, (n, cb) => cb(n) ).then(() => done());
+    new ParaBench().probe({arg: 1}, n => n ).then(() => done());
   })
 
   it('can timeout', done => {
-    new ParaBench().probe( {arg: 1, timeout: 5}, (n, cb) => {})
+    new ParaBench().probe( {arg: 1, timeout: 5, async: true}, (n, cb) => {})
       .then( retVal => {
         done( { expected: 'timeout', got: retVal });
       })

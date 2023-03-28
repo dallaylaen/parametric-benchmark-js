@@ -22,7 +22,7 @@ describe( 'ParaBench.teardown', () => {
             let sum = 1;
             while(n-->0)
                 sum += n;
-            cb(sum);
+            return sum;
         }).then( stat => {
             expect(stat.n).to.equal(100); // round-trip
             expect(stat.err).to.equal('expected 4950, found 4951');
