@@ -48,8 +48,8 @@ const cpuTime = typeof process === 'object' && typeof process.cpuUsage === 'func
  */
 class ParaBench {
   constructor () {
-    this._setup = (n, cb) => cb(n);
-    this._teardown = (_, cb) => cb();
+    this._setup    = n => n;
+    this._teardown = () => {};
     this._solution = {};
     this._asyncSolution = {};
     this._onteardownfail = () => {};
@@ -58,10 +58,11 @@ class ParaBench {
 
   /**
    * @desc Create initial argument for function under test from a positive integer n.
-   * Must be returned via callback.
+   * May also return a Promise.
    * @returns {ParaBench}
-   * @param {(n: number, cb: (input: any) => void) => void} fun Converts n into arbitrary type and calls a callback on it
-   * @example bench.setup( (n, cb) => cb( new Array(n).fill(0) ) );
+   * @param {(n: number) => (any | Promise<any>)} fun Converts n into arbitrary type and calls a callback on it
+   * @example bench.setup( n => new Array(n).fill( 1 ) );
+   * @example bench.setup( n => new Promise( cb => cb( new Array(n).fill( 1 ) ) ) );
    */
   setup (fun) {
     this._setup = fun;
@@ -69,17 +70,16 @@ class ParaBench {
   }
 
   /**
-   * Deallocate whatever resources were used for the benchmark, and also
-   * test the result for validity.
+   * Check the validity of the result and possibly deallocate resources used for testing.
    *
    * The teardown function gets a hash containing the initial numeric argument (n),
    * the input given to code in question (input) and its return value (output) and possibly
    * som additional parameters.
    *
-   * It must return via callback (its second argument),
-   * either a false value if everything is ok, or the description of the problem if there's one.
+   * It must return either a false value (meaning no problems were found),
+   * a string with a problem description, or a promise resolving into one of the above.
    *
-   * @param {({n: int, input: any, output: any}, callback: ([string]) => void) => void} fun
+   * @param {({n: int, input: any, output: any}) => (false | string | Promise<false|string>)} fun fun
    * @returns {ParaBench} self
    */
   teardown (fun) {
@@ -114,7 +114,12 @@ class ParaBench {
       throw new Error("probe requires positive integer {arg} parameter");
 
     return timedPromise( 'Setup', options.timeout, resolve => {
-      this._setup(n, resolve);
+      // TODO: can we optimize out a couple resolve() calls here?
+      const input = this._setup(n);
+      if (input instanceof Promise)
+        input.then(resolve)
+      else
+        resolve(input);
     }).then( arg => timedPromise( 'Solution', options.timeout, resolve => {
       // we have to duplicate a bit of code here
       // to reduce influencing the measurement result.
@@ -135,12 +140,17 @@ class ParaBench {
         const retVal = userCode(arg);
         const date2 = getTime();
         const cpu2 = cpuTime();
+        console.log()
         /* end critical section */
         resolve({arg, retVal, date1, date2, cpu1, cpu2});
       }
     })).then( hash => timedPromise( 'Teardown', options.timeout, resolve => {
         const info = {n, input: hash.arg, output: hash.retVal};
-        this._teardown(info, err => resolve({err, ...hash}));
+        const err = this._teardown(info);
+        if (err instanceof Promise)
+          err.then( err => resolve({err, ...hash}));
+        else
+          resolve({err, ...hash});
     })).then( hash => new Promise( resolve => {
       const { cpu1, cpu2, date1, date2, err } = hash;
       const time = (date2 - date1) / 1000;
