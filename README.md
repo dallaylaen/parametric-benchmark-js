@@ -15,19 +15,19 @@ The most straightforward way to measure code performance is to run a function ov
 
 We thus propose a more sophisticated approach.
 
-* First, the function is given an argument that can vary greatly. This allows to not only find out some "operations per second" value but also see how it reacts to changes in the input size. 
-* We also expect the function to return via callback. This allows to test both synchronous and async code. In case of synchronous code, special care is taken to make sure the measurement takes place right after code in question ends.
-* On top of that we add a `setup(n, callback)` routine that will produce inputs from a positive integer value, say arrays filled with random data or graphs/trees of the required size. The default is, of course, just n itself.
-* And finally we add a `teardown(retVal, cb)` function that can check the output validity of the output (e.g. random array became sorted, tree became balanced etc.) Fast but wrong code is not what we want. 
-* Also the measurements may be performed multiple times, and statistical analysis may be applied to results afterwards. A browser is quite a noisy environment, so multiple runs are preferable, as well as filtering out outliers (i.e. some other thread/process decided to GC while the code was being run).
+* The function in question is given an argument that can vary greatly. This allows to not only find out some "operations per second" value but also see how it reacts to changes in the input size.
+* We also add a `setup(n, callback)` routine that will produce inputs from a positive integer value, say arrays filled with random data or graphs/trees of the required size. The default is, of course, just n itself.
+* And finally we add a `teardown(info, cb)` function that can check the output validity of the output (e.g. random array became sorted, tree became balanced etc.) Fast but wrong code is not what we want. 
+* The measurements may be performed multiple times, and statistical analysis may be applied to results afterwards. A browser is quite a noisy environment, so multiple runs are preferable, as well as filtering out outliers (i.e. some other thread/process decided to GC while the code was being run).
+* On top of that, setup() and teardown() may return promises, and code in question may return via callback instead of a return statement. The use of asynchronous API has to be specified explicitly, as we don't want to waste time autodetecting promises (as we do with non time-critical code) and thus affect the results of measurements.
 
 # The interface
 
 ```javascript
 const bench = new ParaBench()
-        .setup((n, cb) => cb([... Array(n)].map(_ => Math.random())))
-        .add('naive impl', (input, cb) => { ... /* your code here */ })
-        .add('fancy algorithm', ((input, cb) => { ... /* other code here */ });
+        .setup(n => [... Array(n)].map(_ => Math.random()))
+        .add('naive impl', input => { ... /* your code here */ })
+        .add('fancy algorithm', input => { ... /* other code here */ });
 
         bench.compare({minArg: 1000, maxTime: 3, repeat: 10})
                 .then(rawData => {
