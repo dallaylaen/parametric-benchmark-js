@@ -7,10 +7,9 @@ describe( 'ParaBench', () => {
     it('doesn\'t allow multiple callbacks', done => {
         const trace = [];
         const bench = new ParaBench()
-            .teardown((info, cb) => {
+            .teardown(info => {
                 console.log(info);
                 trace.push(info.output);
-                cb()
             });
 
 

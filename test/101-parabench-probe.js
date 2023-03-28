@@ -4,13 +4,15 @@ const { ParaBench } = require('../lib/paraBench');
 describe('BigoBench', () => {
   it('runs some code & provides summary', (done) => {
     const perf = new ParaBench()
-      .setup((n, cb) => cb([...Array(n).keys()].reverse()))
-      .teardown((array, cb) => {
+      .setup(n => [...Array(n).keys()].reverse())
+      .teardown(info => {
+        const array = info.output;
+        if (array.length !== info.n)
+          return 'bad array length';
         for (let i = 1; i < array.length; i++) {
           if (array[i - 1] > array[i])
-            cb('array out of order' + array.join(', '));
+            return 'array out of order' + array.join(', ');
         }
-        cb();
       });
 
     const prom = perf.probe({arg: 10000, async: true}, (ary, cb) => cb(ary.sort((x, y) => x - y)) );
@@ -26,7 +28,7 @@ describe('BigoBench', () => {
       expect(out.cpu).to.equal(out.user + out.system);
 
       done();
-    });
+    }).catch(done);
   });
 
   it ('has sane default setup & teardown', done => {

@@ -7,15 +7,13 @@ describe( 'ParaBench.teardown', () => {
     it('gets executed and sets err in stat accordingly', done => {
         const trace = [];
         const bench = new ParaBench()
-            .teardown((info, cb) => {
+            .teardown(info => {
                 const result = info.output;
                 const wanted = info.n*(info.n-1)/2;
                 if (info.n !== info.input)
                     throw('expected n to equal arg');
                 if (result !== wanted)
-                    cb('expected '+wanted+', found '+result);
-                else
-                    cb();
+                    return 'expected '+wanted+', found '+result;
             })
             .onTeardownFail(info => trace.push(info.n));
         bench.probe({ arg: 100 }, (n, cb) => {
