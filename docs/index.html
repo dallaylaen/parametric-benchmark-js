@@ -37,7 +37,7 @@
         <button onclick="toggleParent(this)">&gt;&gt;</button></div>
     <div class="right">
         <textarea class="code">
-(n, cb) => cb(n)
+n => n
         </textarea>
         <div class="error"></div>
     </div>
@@ -101,10 +101,9 @@ n => {
     </div>
     <div class="right">
         <textarea class="code">
-(data, cb) => {
-    const {n, input, output} = data;
+info => {
+    const {n, input, output} = info;
     // check output validity here
-    cb();
 }
         </textarea>
         <div class="error"></div>
