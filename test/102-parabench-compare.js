@@ -41,5 +41,19 @@ describe( 'BigoBench.compare', () => {
       expect( trace ).to.deep.equal( cmpData );
       done();
     }).catch( err => done(err) );
-  })
+  });
+
+  it('can handle both sync & async functions', done => {
+      const bench = new ParaBench()
+          .add('simple', n => n)
+          .addAsync('callback', (n, cb) => cb(n));
+      bench.compare({maxArg: 10}).then(
+          result => {
+              expect(Object.keys(result).sort()).to.deep.equal(['callback', 'simple']);
+              expect(result.simple.length).to.equal(6);
+              expect(result.callback.length).to.equal(6);
+              done();
+          }
+      ).catch(done);
+  });
 })
