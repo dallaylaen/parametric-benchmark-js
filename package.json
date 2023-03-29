@@ -1,6 +1,6 @@
 {
   "name": "parametric-benchmark",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "Benchmark code samples over a range of inputs",
   "main": "lib/para-bench.js",
   "scripts": {
