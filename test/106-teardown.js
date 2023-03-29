@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect } = require('chai');
-const { ParaBench } = require ('../index.js');
+const { ParaBench } = require ('../lib/para-bench.js');
 
 describe( 'ParaBench.teardown', () => {
     it('gets executed and sets err in stat accordingly', done => {

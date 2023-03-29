@@ -1,6 +1,6 @@
 'use strict';
 
-const { ParaBench } = require('../lib/paraBench');
+const { ParaBench } = require('../lib/para-bench');
 
 const bench = new ParaBench();
 

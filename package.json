@@ -2,7 +2,7 @@
   "name": "parametric-benchmark",
   "version": "1.0.0",
   "description": "Benchmark code samples over a range of inputs",
-  "main": "index.js",
+  "main": "lib/para-bench.js",
   "scripts": {
     "test": "nyc mocha",
     "gen-js": "browserify ./web-index.js > docs/js/generated/bench.js"

@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect } = require('chai');
-const { ParaBench} = require ('../lib/paraBench');
+const { ParaBench} = require ('../lib/para-bench');
 
 describe( 'BigoBench.compare', () => {
   it( 'produces some results', done => {

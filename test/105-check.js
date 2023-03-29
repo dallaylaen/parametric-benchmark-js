@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect } = require( 'chai' );
-const { ParaBench } = require ('../index');
+const { ParaBench } = require ('../lib/para-bench');
 
 describe( 'ParaBench.check', () => {
     it( 'can catch broken callbacks', done => {

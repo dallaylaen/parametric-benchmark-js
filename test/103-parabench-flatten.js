@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect } = require( 'chai' );
-const { ParaBench } = require( '../index.js' );
+const { ParaBench } = require( '../lib/para-bench.js' );
 
 describe( 'ParaBench.flattenData', () => {
     it('squashes diff measurements into one', done => {
