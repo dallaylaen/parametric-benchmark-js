@@ -15,7 +15,7 @@
  * All times exclude setup, teardown, and surrounding code.
  */
 
-const { timedPromise, getTime } = require( './util' );
+const { timedPromise, getTime } = require( './para-bench/util' );
 
 // alas, process.cpuUsage is not available in browser, so don't rely on it.
 const process = require('process/');
@@ -427,7 +427,7 @@ module.exports = { ParaBench };
 
 /* Utility functions */
 
-},{"./util":2,"process/":3}],2:[function(require,module,exports){
+},{"./para-bench/util":2,"process/":3}],2:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -655,7 +655,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],4:[function(require,module,exports){
-const { ParaBench } = require( './lib/paraBench');
+const { ParaBench } = require( './lib/para-bench');
 window.ParaBench = ParaBench;
 
-},{"./lib/paraBench":1}]},{},[4]);
+},{"./lib/para-bench":1}]},{},[4]);
