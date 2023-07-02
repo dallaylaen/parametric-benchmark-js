@@ -23,13 +23,15 @@
   },
   "homepage": "https://github.com/dallaylaen/parametric-benchmark-js#readme",
   "devDependencies": {
+    "@webpack-cli/generators": "^3.0.7",
     "browserify": "^17.0.0",
     "chai": "^4.3.7",
     "chart.js": "^4.2.0",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "webpack": "^5.88.1"
   },
   "dependencies": {
     "process": "^0.11.10",
-    "stats-logscale": "^1.0.6"
+    "stats-logscale": "^1.0.7"
   }
 }
