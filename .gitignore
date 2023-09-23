@@ -2,7 +2,8 @@
 .idea/
 
 # Gererated files - comment for github.io
-# /docs/js/generated/*.js
+# /docs/js/dist/*.js
+!docs/js/dist
 
 # Logs
 logs
@@ -87,8 +88,8 @@ typings/
 .next
 
 # Nuxt.js build / generate output
-.nuxt
-dist
+/.nuxt
+/dist
 
 # Gatsby files
 .cache/
